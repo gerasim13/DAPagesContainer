@@ -23,6 +23,8 @@
 @property (readonly, assign, nonatomic) CGFloat scrollWidth;
 @property (readonly, assign, nonatomic) CGFloat scrollHeight;
 
+@property (assign, nonatomic, getter = isTopBarVisibled) BOOL topBarVisible;
+
 - (void)layoutSubviews;
 - (void)startObservingContentOffsetForScrollView:(UIScrollView *)scrollView;
 - (void)stopObservingContentOffset;
@@ -67,6 +69,37 @@
     self.selectedPageItemTitleColor = [UIColor whiteColor];
 }
 
+- (void)setTopBarAutoHide:(BOOL)topBarAutoHide {
+    if (_topBarAutoHide == topBarAutoHide) {
+        return;
+    }
+    _topBarAutoHide = topBarAutoHide;
+    
+    [self layoutSubviews];
+}
+
+- (void)setTopBarVisible:(BOOL)topBarVisible {
+    if (_topBarVisible == topBarVisible) {
+        return;
+    }
+    
+    _topBarVisible = topBarVisible;
+    
+    [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+        self.pageIndicatorView.alpha = self.isTopBarVisibled ? 1 : 0;
+        self.topBar.alpha = self.isTopBarVisibled ? 1 : 0;
+        self.topBar.frame = CGRectMake(0.,
+                                       self.isTopBarVisibled ? 0 : -self.topBarHeight,
+                                       CGRectGetWidth(self.view.frame),
+                                       self.topBarHeight);
+        self.pageIndicatorView.center = CGPointMake([self.topBar centerForSelectedItemAtIndex:self.selectedIndex].x,
+                                                    [self pageIndicatorCenterY]);
+        
+    } completion:^(BOOL finished) {
+        
+    }];
+}
+
 #pragma mark - View life cycle
 
 - (void)viewDidLoad
@@ -75,8 +108,9 @@
     self.shouldObserveContentOffset = YES;
     
     self.scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0.,
-                                                                     self.topBarHeight,
+                                                                     self.topBarAutoHide ? 0 : self.topBarHeight,
                                                                      CGRectGetWidth(self.view.frame),
+                                                                     self.topBarAutoHide ? CGRectGetHeight(self.view.frame) :
                                                                      CGRectGetHeight(self.view.frame) - self.topBarHeight)];
     self.scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.scrollView.delegate = self;
@@ -86,9 +120,11 @@
     [self startObservingContentOffsetForScrollView:self.scrollView];
     
     self.topBar = [[DAPagesContainerTopBar alloc] initWithFrame:CGRectMake(0.,
-                                                                           0.,
+                                                                           self.topBarAutoHide ? -self.topBarHeight : 0.,
                                                                            CGRectGetWidth(self.view.frame),
                                                                            self.topBarHeight)];
+    self.topBar.alpha = self.topBarAutoHide ? 0 : 1;
+    self.pageIndicatorView.alpha = self.topBar.alpha;
     self.topBar.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
     self.topBar.itemTitleColor = self.pageItemsTitleColor;
     self.topBar.delegate = self;
@@ -354,6 +390,7 @@
 {
     self.selectedIndex = scrollView.contentOffset.x / CGRectGetWidth(self.scrollView.frame);
     self.scrollView.userInteractionEnabled = YES;
+    self.topBarVisible = NO;
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
@@ -371,6 +408,9 @@
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
     self.scrollView.userInteractionEnabled = NO;
+    if (!self.isTopBarVisibled) {
+        self.topBarVisible = YES;
+    }
 }
 
 #pragma mark - KVO
