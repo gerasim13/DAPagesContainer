@@ -355,7 +355,7 @@
 
 - (CGFloat)scrollHeight
 {
-    return CGRectGetHeight(self.view.frame) - self.topBarHeight;
+    return self.topBarAutoHide ? CGRectGetHeight(self.view.frame) : CGRectGetHeight(self.view.frame) - self.topBarHeight;
 }
 
 - (CGFloat)scrollWidth
