@@ -232,9 +232,17 @@
     }
 }
 
+- (void)_doHideTopBar {
+    self.topBarVisible = NO;
+    self.scrollView.userInteractionEnabled = YES;
+}
+
 - (void)setSelectedIndex:(NSUInteger)selectedIndex
 {
     [self setSelectedIndex:selectedIndex animated:NO];
+    if (self.topBarAutoHide) {
+        [self performSelector:@selector(_doHideTopBar) withObject:nil afterDelay:0.5];
+    }
 }
 
 - (void)setSelectedPageItemTitleColor:(UIColor *)selectedPageItemTitleColor
