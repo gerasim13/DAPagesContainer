@@ -12,6 +12,8 @@
 
 @interface DAPagesContainer : UIViewController
 
+@property (assign, nonatomic) BOOL topBarAutoHide;
+
 /**
  The view controllers to be displayed in DAPagesContainer in order they appear in this array.
  @discussion view objects for all the view controllers will be resized to fit the container bounds together with topBar. Normally you should have more than one view controller.
@@ -28,7 +30,7 @@
  A hight of the top bar. Every time this value is changed, view objects for all the view controllers are resized.
  This is 44. by default.
  */
-@property (assign, nonatomic) NSUInteger topBarHeight;
+@property (assign, nonatomic) NSInteger topBarHeight;
 
 /**
  An optional image page for the page indicator view
