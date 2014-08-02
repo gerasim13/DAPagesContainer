@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol DAPagesContainerDelegate;
 
 @interface DAPagesContainer : UIViewController
 
@@ -69,6 +70,8 @@
  This is white by default.
  */
 @property (strong, nonatomic) UIColor *selectedPageItemTitleColor;
+@property (strong, nonatomic) UIColor *borderGlowColor;
+@property (assign, nonatomic) NSObject<DAPagesContainerDelegate> *delegate;
 
 /**
  Changes 'selectedIndex' property value and navigates to the newly selected view controller
@@ -82,5 +85,12 @@
  Makes sure that view objects for all the view controllers are properly resized to fit the container bounds after device orientation was changed
  */
 - (void)updateLayoutForNewOrientation:(UIInterfaceOrientation)orientation;
+- (void)layoutSubviews;
+
+@end
+
+@protocol DAPagesContainerDelegate <NSObject>
+
+- (void)pagesContainer:(DAPagesContainer *)container didSelectIndex:(NSUInteger)index;
 
 @end

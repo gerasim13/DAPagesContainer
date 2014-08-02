@@ -21,6 +21,7 @@
 
 
 @implementation DAPagesContainerTopBar
+@synthesize itemTitleColor = _itemTitleColor;
 
 CGFloat const DAPagesContainerTopBarItemViewWidth = 100.;
 CGFloat const DAPagesContainerTopBarItemsOffset = 30.;
@@ -59,12 +60,12 @@ CGFloat const DAPagesContainerTopBarItemsOffset = 30.;
     }
 }
 
-- (void)setItemTitleColor:(UIColor *)itemTitleColor
+- (void)setItemTitleColor:(UIColor *)theItemTitleColor
 {
-    if (![_itemTitleColor isEqual:itemTitleColor]) {
-        _itemTitleColor = itemTitleColor;
+    if (![_itemTitleColor isEqual:theItemTitleColor]) {
+        _itemTitleColor = theItemTitleColor;
         for (UIButton *button in self.itemViews) {
-            [button setTitleColor:itemTitleColor forState:UIControlStateNormal];
+            [button setTitleColor:theItemTitleColor forState:UIControlStateNormal];
         }
     }
 }
@@ -110,6 +111,7 @@ CGFloat const DAPagesContainerTopBarItemsOffset = 30.;
     [itemView addTarget:self action:@selector(itemViewTapped:) forControlEvents:UIControlEventTouchUpInside];
     itemView.titleLabel.font = self.font;
     [itemView setTitleColor:self.itemTitleColor forState:UIControlStateNormal];
+    itemView.backgroundColor = [UIColor clearColor];
     [self.scrollView addSubview:itemView];
     return itemView;
 }
